@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Marking System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .tab-active { border-color: #4f46e5; color: #4f46e5; }
+        .form-container { display: none; }
+        .form-container.active { display: block; }
+        .dashboard { display: none; }
+        .dashboard.active { display: block; }
+        .page { display: none; }
+        .page.active { display: flex; } /* Changed to flex for centering */
+    </style>
+</head>
+<body class="bg-slate-100">
+
+    <!-- Login Page -->
+    <div id="login-page" class="page active min-h-screen items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 bg-cover bg-center" style="background-image: url('https://placehold.co/1920x1080/E0E7FF/6366F1?text=GC+MALAPPURAM');">
+        <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-lg">
+            <div>
+                <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                    Attendance Marking System
+                </h2>
+                <p class="mt-2 text-center text-sm text-gray-600">
+                    Welcome! Please sign in to your account.
+                </p>
+            </div>
+            
+            <!-- Tabs -->
+            <div class="border-b border-gray-200">
+                <nav class="-mb-px flex space-x-8 justify-center" aria-label="Tabs">
+                    <button id="admin-tab" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm tab-active" onclick="switchTab('admin')">Admin</button>
+                    <button id="teacher-tab" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" onclick="switchTab('teacher')">Teacher</button>
+                    <button id="student-tab" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" onclick="switchTab('student')">Student</button>
+                </nav>
+            </div>
+
+            <!-- Admin Login Form -->
+            <div id="admin-form" class="form-container active">
+                <form class="mt-8 space-y-6" onsubmit="handleLogin('admin', event)">
+                    <div class="rounded-md shadow-sm -space-y-px">
+                        <div>
+                            <label for="admin-username" class="sr-only">Admin Username</label>
+                            <input id="admin-username" name="username" type="text" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Admin Username" value="admin">
+                        </div>
+                        <div>
+                            <label for="admin-password" class="sr-only">Password</label>
+                            <input id="admin-password" name="password" type="password" autocomplete="current-password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Password" value="adminpass">
+                        </div>
+                    </div>
+                    <div>
+                        <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Login as Admin
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Teacher Login/Signup Forms -->
+            <div id="teacher-form" class="form-container">
+                 <!-- Teacher Login -->
+                <form id="teacher-login-form" class="mt-8 space-y-6" onsubmit="handleLogin('teacher', event)">
+                    <div class="rounded-md shadow-sm -space-y-px">
+                         <div>
+                            <label for="teacher-username" class="sr-only">Teacher Username</label>
+                            <input id="teacher-username" name="username" type="text" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Teacher Username">
+                        </div>
+                        <div>
+                            <label for="teacher-password" class="sr-only">Password</label>
+                            <input id="teacher-password" name="password" type="password" autocomplete="current-password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Password">
+                        </div>
+                    </div>
+                    <div>
+                        <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Login as Teacher
+                        </button>
+                    </div>
+                </form>
+                <!-- Teacher Signup -->
+                <form id="teacher-signup-form" class="mt-8 space-y-6 hidden" onsubmit="handleSignup(event)">
+                     <div class="rounded-md shadow-sm -space-y-px">
+                        <div>
+                            <input id="signup-fullname" type="text" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Full Name">
+                        </div>
+                        <div>
+                            <input id="signup-username" type="text" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Username">
+                        </div>
+                        <div>
+                            <input id="signup-password" type="password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Password">
+                        </div>
+                    </div>
+                    <div>
+                        <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                            Create Account
+                        </button>
+                    </div>
+                </form>
+                <div class="text-center mt-4 text-sm">
+                    <p id="auth-toggle-link">Don't have an account? <a href="#" onclick="toggleAuthForms()" class="font-medium text-indigo-600 hover:text-indigo-500">Sign up</a></p>
+                </div>
+            </div>
+
+            <!-- Student Login Form -->
+            <div id="student-form" class="form-container">
+                <form class="mt-8 space-y-6" onsubmit="handleLogin('student', event)">
+                     <div class="rounded-md shadow-sm -space-y-px">
+                        <div>
+                            <label for="student-username" class="sr-only">Student Username/ID</label>
+                            <input id="student-username" name="username" type="text" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Student Username/ID">
+                        </div>
+                        <div>
+                            <label for="student-password" class="sr-only">Password</label>
+                            <input id="student-password" name="password" type="password" autocomplete="current-password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Password">
+                        </div>
+                    </div>
+                    <div>
+                        <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Login as Student
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <!-- Error Message Box -->
+            <div id="error-message" class="hidden text-center p-2 mt-4 bg-red-100 text-red-700 rounded-md"></div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="dashboard p-8">
+       <h1 class="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+        <div class="mt-8">
+            <h2 class="text-xl font-semibold">Approve New Teachers</h2>
+            <div id="pending-teachers-list" class="mt-4 bg-white p-4 rounded-lg shadow">
+                <!-- Pending teachers will be loaded here -->
+                <p>Loading pending teachers...</p>
+            </div>
+        </div>
+        <div class="mt-8">
+            <h2 class="text-xl font-semibold">Manage Classes</h2>
+             <!-- Add class form -->
+        </div>
+        <button onclick="logout()" class="mt-8 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">Logout</button>
+    </div>
+
+    <!-- Teacher Dashboard -->
+    <div id="teacher-dashboard" class="dashboard p-8">
+        <h1 class="text-3xl font-bold text-gray-900">Teacher Dashboard</h1>
+         <!-- Teacher navigation tabs -->
+        <div class="mt-6 border-b border-gray-200">
+            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                <button class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm tab-active" onclick="switchTeacherTab(event, 'mark-attendance')">Mark Attendance</button>
+                <button class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500" onclick="switchTeacherTab(event, 'student-management')">Student Management</button>
+                <button class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500" onclick="switchTeacherTab(event, 'monthly-reports')">Monthly Reports</button>
+                <button class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500" onclick="switchTeacherTab(event, 'holidays')">Holidays</button>
+            </nav>
+        </div>
+        
+        <!-- Teacher content sections -->
+        <div id="mark-attendance" class="teacher-content active mt-6">
+            <h2 class="text-xl font-semibold">Mark Attendance for 10-A</h2>
+            <div class="flex items-center space-x-4 mt-4">
+                <input type="date" id="attendance-date" class="border rounded px-2 py-1">
+                <button onclick="saveAttendance()" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Save Attendance</button>
+            </div>
+             <div class="mt-4 flex space-x-2">
+                <button onclick="markAll('present')" class="bg-green-500 text-white px-3 py-1 rounded-md text-sm">All Present</button>
+                <button onclick="markAll('absent')" class="bg-red-500 text-white px-3 py-1 rounded-md text-sm">All Absent</button>
+                <button onclick="markAll('half-day')" class="bg-yellow-500 text-white px-3 py-1 rounded-md text-sm">All Half-day</button>
+            </div>
+            <div id="student-list-attendance" class="mt-4 bg-white p-4 rounded-lg shadow">
+                 <!-- Student list for attendance will be loaded here -->
+            </div>
+        </div>
+        <div id="student-management" class="teacher-content hidden mt-6">
+            <h2 class="text-xl font-semibold">Manage Students in 10-A</h2>
+        </div>
+        <div id="monthly-reports" class="teacher-content hidden mt-6">
+            <h2 class="text-xl font-semibold">Monthly Reports</h2>
+        </div>
+        <div id="holidays" class="teacher-content hidden mt-6">
+            <h2 class="text-xl font-semibold">Holiday Management</h2>
+        </div>
+        <button onclick="logout()" class="mt-8 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">Logout</button>
+    </div>
+
+    <!-- Student Dashboard -->
+    <div id="student-dashboard" class="dashboard p-8">
+        <h1 class="text-3xl font-bold text-gray-900">Your Attendance Summary</h1>
+         <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-green-100 p-6 rounded-lg shadow text-center">
+                <p class="text-lg font-medium text-green-800">Total Present</p>
+                <p id="total-present" class="text-4xl font-bold text-green-600">--</p>
+            </div>
+            <div class="bg-red-100 p-6 rounded-lg shadow text-center">
+                <p class="text-lg font-medium text-red-800">Total Absent</p>
+                <p id="total-absent" class="text-4xl font-bold text-red-600">--</p>
+            </div>
+            <div class="bg-yellow-100 p-6 rounded-lg shadow text-center">
+                <p class="text-lg font-medium text-yellow-800">Total Half-days</p>
+                <p id="total-half-day" class="text-4xl font-bold text-yellow-600">--</p>
+            </div>
+        </div>
+         <div class="mt-8 bg-white p-6 rounded-lg shadow">
+             <h2 class="text-xl font-semibold text-center">Overall Percentage</h2>
+             <div class="relative pt-1">
+                <div class="overflow-hidden h-4 mt-4 text-xs flex rounded bg-indigo-200">
+                    <div id="attendance-bar" style="width: 0%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-indigo-500"></div>
+                </div>
+                <p id="attendance-percentage" class="text-center font-bold mt-2 text-indigo-600">--%</p>
+            </div>
+         </div>
+         <button onclick="logout()" class="mt-8 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">Logout</button>
+    </div>
+
+<script>
+    // --- IMPORTANT: API Configuration ---
+    // This MUST point to your running Flask server.
+    const API_BASE_URL = 'http://127.0.0.1:5001/api';
+
+    // --- Global State ---
+    let currentUser = null;
+
+    // --- API Helper Function ---
+    async function apiCall(endpoint, method = 'GET', body = null) {
+        const options = {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+        };
+        if (body) {
+            options.body = JSON.stringify(body);
+        }
+
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ error: 'An unknown network error occurred' }));
+            throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    }
+    
+    // --- UI Navigation ---
+    function switchTab(tabName) {
+        // Switch active tab style
+        document.querySelectorAll('nav[aria-label="Tabs"] button').forEach(b => b.classList.remove('tab-active'));
+        document.getElementById(`${tabName}-tab`).classList.add('tab-active');
+        
+        // Show correct form
+        document.querySelectorAll('.form-container').forEach(f => f.classList.remove('active'));
+        document.getElementById(`${tabName}-form`).classList.add('active');
+        
+        hideError();
+    }
+
+    function toggleAuthForms() {
+        const loginForm = document.getElementById('teacher-login-form');
+        const signupForm = document.getElementById('teacher-signup-form');
+        const toggleLink = document.getElementById('auth-toggle-link');
+        
+        const isLoginHidden = loginForm.classList.toggle('hidden');
+        signupForm.classList.toggle('hidden', !isLoginHidden);
+        
+        if (isLoginHidden) {
+            toggleLink.innerHTML = `Already have an account? <a href="#" onclick="toggleAuthForms()" class="font-medium text-indigo-600 hover:text-indigo-500">Log in</a>`;
+        } else {
+            toggleLink.innerHTML = `Don't have an account? <a href="#" onclick="toggleAuthForms()" class="font-medium text-indigo-600 hover:text-indigo-500">Sign up</a>`;
+        }
+    }
+
+    // --- Error Handling ---
+    function showError(message) {
+        const errorBox = document.getElementById('error-message');
+        errorBox.textContent = message;
+        errorBox.classList.remove('hidden');
+    }
+
+    function hideError() {
+        document.getElementById('error-message').classList.add('hidden');
+    }
+
+    // --- Authentication ---
+    async function handleLogin(role, event) {
+        event.preventDefault(); // This is the key change to prevent page reload
+        hideError();
+        const username = document.getElementById(`${role}-username`).value;
+        const password = document.getElementById(`${role}-password`).value;
+
+        if (!username || !password) {
+            showError('Username and password are required.');
+            return;
+        }
+
+        try {
+            const data = await apiCall('/login', 'POST', { username, password });
+            if (data.user.role !== role) {
+                showError(`You are not authorized to log in as a ${role}.`);
+                return;
+            }
+            currentUser = data.user;
+            navigateToDashboard(currentUser.role);
+        } catch (error) {
+            showError(error.message);
+        }
+    }
+    
+     async function handleSignup(event) {
+        event.preventDefault(); // Also important here
+        hideError();
+        const full_name = document.getElementById('signup-fullname').value;
+        const username = document.getElementById('signup-username').value;
+        const password = document.getElementById('signup-password').value;
+
+        try {
+            const data = await apiCall('/teacher/signup', 'POST', { full_name, username, password });
+            alert(data.message); // Use a nicer modal in a real app
+            toggleAuthForms(); // Switch back to login form
+        } catch (error) {
+            showError(error.message);
+        }
+    }
+
+    function logout() {
+        currentUser = null;
+        // In a real app, call a '/logout' endpoint
+        document.querySelectorAll('.dashboard').forEach(d => d.classList.remove('active'));
+        document.getElementById('login-page').classList.add('active');
+    }
+    
+    function navigateToDashboard(role) {
+        // Hide the login page
+        document.getElementById('login-page').classList.remove('active');
+        
+        // Show the correct dashboard
+        document.querySelectorAll('.dashboard').forEach(d => d.classList.remove('active'));
+        const dashboard = document.getElementById(`${role}-dashboard`);
+        if (dashboard) {
+            dashboard.classList.add('active');
+        }
+        
+        // Fetch initial data for the specific dashboard
+        if (role === 'admin') loadPendingTeachers();
+        if (role === 'teacher') loadStudentsForAttendance();
+        if (role === 'student') loadStudentDashboard();
+    }
+
+    // --- Admin Functions ---
+    async function loadPendingTeachers() {
+        const listEl = document.getElementById('pending-teachers-list');
+        try {
+            const teachers = await apiCall('/admin/pending-teachers');
+            if (teachers.length === 0) {
+                listEl.innerHTML = '<p>No new teacher registrations.</p>';
+                return;
+            }
+            listEl.innerHTML = teachers.map(t => `
+                <div class="flex justify-between items-center p-2 border-b">
+                    <span>${t.full_name}</span>
+                    <button onclick="approveTeacher(${t.id})" class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded text-sm">Approve</button>
+                </div>
+            `).join('');
+        } catch (error) {
+            listEl.innerHTML = `<p class="text-red-500">Error loading teachers: ${error.message}</p>`;
+        }
+    }
+    
+    async function approveTeacher(teacherId) {
+        // This function would call POST /api/admin/approve-teacher/<teacher_id>
+        alert(`Approving teacher ${teacherId}. In a real app, this would make an API call.`);
+        loadPendingTeachers(); // Refresh the list
+    }
+
+    // --- Teacher Functions ---
+    function switchTeacherTab(event, tabId) {
+        document.querySelectorAll('#teacher-dashboard .tab-active').forEach(t => t.classList.remove('tab-active'));
+        event.target.classList.add('tab-active');
+        
+        document.querySelectorAll('.teacher-content').forEach(c => c.classList.add('hidden'));
+        document.getElementById(tabId).classList.remove('hidden');
+    }
+    
+    async function loadStudentsForAttendance() {
+        const listEl = document.getElementById('student-list-attendance');
+        try {
+            // In a real app, you'd pass the teacher's class ID
+            const students = await apiCall('/teacher/students');
+            listEl.innerHTML = students.map(s => `
+                 <div class="grid grid-cols-2 items-center p-2 border-b" data-student-id="${s.id}">
+                    <span>${s.roll_number} - ${s.full_name}</span>
+                    <div class="flex space-x-1 justify-end">
+                        <label class="p-2 rounded-md cursor-pointer has-[:checked]:bg-green-500 has-[:checked]:text-white"><input type="radio" name="attendance-${s.id}" value="present" class="sr-only"> P</label>
+                        <label class="p-2 rounded-md cursor-pointer has-[:checked]:bg-red-500 has-[:checked]:text-white"><input type="radio" name="attendance-${s.id}" value="absent" class="sr-only"> A</label>
+                        <label class="p-2 rounded-md cursor-pointer has-[:checked]:bg-yellow-500 has-[:checked]:text-white"><input type="radio" name="attendance-${s.id}" value="half-day" class="sr-only"> HD</label>
+                    </div>
+                </div>
+            `).join('');
+        } catch(error) {
+             listEl.innerHTML = `<p class="text-red-500">Error loading students: ${error.message}</p>`;
+        }
+    }
+    
+    function markAll(status) {
+        const studentRows = document.querySelectorAll('#student-list-attendance [data-student-id]');
+        studentRows.forEach(row => {
+            const radio = row.querySelector(`input[value="${status}"]`);
+            if (radio) radio.checked = true;
+        });
+    }
+
+    async function saveAttendance() {
+        const date = document.getElementById('attendance-date').value;
+        if (!date) {
+            alert('Please select a date.');
+            return;
+        }
+        
+        const attendanceData = [];
+        const studentRows = document.querySelectorAll('#student-list-attendance [data-student-id]');
+        studentRows.forEach(row => {
+            const studentId = row.dataset.studentId;
+            const checkedRadio = row.querySelector('input[type="radio"]:checked');
+            if (checkedRadio) {
+                attendanceData.push({ student_id: studentId, status: checkedRadio.value });
+            }
+        });
+        
+        if (attendanceData.length !== studentRows.length) {
+            alert('Please mark attendance for all students.');
+            return;
+        }
+        
+        try {
+            const result = await apiCall('/teacher/attendance', 'POST', { date, attendance: attendanceData });
+            alert(result.message);
+        } catch (error) {
+            alert(`Error saving attendance: ${error.message}`);
+        }
+    }
+
+
+    // --- Student Functions ---
+    async function loadStudentDashboard() {
+        try {
+            // In a real app, you'd pass the student's ID
+            const data = await apiCall('/student/dashboard');
+            document.getElementById('total-present').textContent = data.total_present;
+            document.getElementById('total-absent').textContent = data.total_absent;
+            document.getElementById('total-half-day').textContent = data.total_half_day;
+            
+            const percentage = (data.total_present / data.total_working_days) * 100;
+            const percentageFixed = percentage.toFixed(1);
+            
+            document.getElementById('attendance-bar').style.width = `${percentageFixed}%`;
+            document.getElementById('attendance-percentage').textContent = `${percentageFixed}%`;
+
+        } catch (error) {
+            alert(`Error loading dashboard: ${error.message}`);
+        }
+    }
+    
+    // --- Initial Load ---
+    document.addEventListener('DOMContentLoaded', () => {
+       // Set today's date for attendance
+       const today = new Date().toISOString().split('T')[0];
+       document.getElementById('attendance-date').value = today;
+       // Any other initial setup
+    });
+
+</script>
+</body>
+</html>
+
+
+
