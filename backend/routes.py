@@ -71,6 +71,18 @@ def get_pending_teachers():
     } for teacher in pending_teachers]
     return jsonify(teachers_list)
 
+# --- NEW ROUTE ADDED HERE ---
+@bp.route('/admin/approve-teacher/<int:teacher_id>', methods=['POST'])
+def approve_teacher(teacher_id):
+    teacher_profile = TeacherProfile.query.filter_by(user_id=teacher_id).first()
+    if not teacher_profile:
+        return jsonify({'error': 'Teacher not found'}), 404
+    
+    teacher_profile.is_approved = True
+    db.session.commit()
+    
+    return jsonify({'message': f'Teacher {teacher_profile.full_name} approved successfully.'}), 200
+
 
 # --- Teacher Routes ---
 @bp.route('/teacher/students', methods=['GET'])
@@ -105,4 +117,3 @@ def get_student_dashboard():
         "total_working_days": 100
     }
     return jsonify(mock_data)
-
