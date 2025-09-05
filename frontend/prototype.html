@@ -19,7 +19,6 @@
 </head>
 <body class="bg-slate-100">
 
-    <!-- Login Page -->
     <div id="login-page" class="page active min-h-screen items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 bg-cover bg-center" style="background-image: url('https://placehold.co/1920x1080/E0E7FF/6366F1?text=GC+MALAPPURAM');">
         <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-lg">
             <div>
@@ -31,7 +30,6 @@
                 </p>
             </div>
             
-            <!-- Tabs -->
             <div class="border-b border-gray-200">
                 <nav class="-mb-px flex space-x-8 justify-center" aria-label="Tabs">
                     <button id="admin-tab" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm tab-active" onclick="switchTab('admin')">Admin</button>
@@ -40,7 +38,6 @@
                 </nav>
             </div>
 
-            <!-- Admin Login Form -->
             <div id="admin-form" class="form-container active">
                 <form class="mt-8 space-y-6" onsubmit="handleLogin('admin', event)">
                     <div class="rounded-md shadow-sm -space-y-px">
@@ -61,10 +58,8 @@
                 </form>
             </div>
             
-            <!-- Teacher Login/Signup Forms -->
             <div id="teacher-form" class="form-container">
-                 <!-- Teacher Login -->
-                <form id="teacher-login-form" class="mt-8 space-y-6" onsubmit="handleLogin('teacher', event)">
+                 <form id="teacher-login-form" class="mt-8 space-y-6" onsubmit="handleLogin('teacher', event)">
                     <div class="rounded-md shadow-sm -space-y-px">
                          <div>
                             <label for="teacher-username" class="sr-only">Teacher Username</label>
@@ -81,7 +76,6 @@
                         </button>
                     </div>
                 </form>
-                <!-- Teacher Signup -->
                 <form id="teacher-signup-form" class="mt-8 space-y-6 hidden" onsubmit="handleSignup(event)">
                      <div class="rounded-md shadow-sm -space-y-px">
                         <div>
@@ -105,7 +99,6 @@
                 </div>
             </div>
 
-            <!-- Student Login Form -->
             <div id="student-form" class="form-container">
                 <form class="mt-8 space-y-6" onsubmit="handleLogin('student', event)">
                      <div class="rounded-md shadow-sm -space-y-px">
@@ -125,33 +118,27 @@
                     </div>
                 </form>
             </div>
-            <!-- Error Message Box -->
             <div id="error-message" class="hidden text-center p-2 mt-4 bg-red-100 text-red-700 rounded-md"></div>
         </div>
     </div>
 
-    <!-- Admin Dashboard -->
     <div id="admin-dashboard" class="dashboard p-8">
        <h1 class="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
         <div class="mt-8">
             <h2 class="text-xl font-semibold">Approve New Teachers</h2>
             <div id="pending-teachers-list" class="mt-4 bg-white p-4 rounded-lg shadow">
-                <!-- Pending teachers will be loaded here -->
                 <p>Loading pending teachers...</p>
             </div>
         </div>
         <div class="mt-8">
             <h2 class="text-xl font-semibold">Manage Classes</h2>
-             <!-- Add class form -->
-        </div>
+             </div>
         <button onclick="logout()" class="mt-8 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">Logout</button>
     </div>
 
-    <!-- Teacher Dashboard -->
     <div id="teacher-dashboard" class="dashboard p-8">
         <h1 class="text-3xl font-bold text-gray-900">Teacher Dashboard</h1>
-         <!-- Teacher navigation tabs -->
-        <div class="mt-6 border-b border-gray-200">
+         <div class="mt-6 border-b border-gray-200">
             <nav class="-mb-px flex space-x-8" aria-label="Tabs">
                 <button class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm tab-active" onclick="switchTeacherTab(event, 'mark-attendance')">Mark Attendance</button>
                 <button class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500" onclick="switchTeacherTab(event, 'student-management')">Student Management</button>
@@ -160,7 +147,6 @@
             </nav>
         </div>
         
-        <!-- Teacher content sections -->
         <div id="mark-attendance" class="teacher-content active mt-6">
             <h2 class="text-xl font-semibold">Mark Attendance for 10-A</h2>
             <div class="flex items-center space-x-4 mt-4">
@@ -173,8 +159,7 @@
                 <button onclick="markAll('half-day')" class="bg-yellow-500 text-white px-3 py-1 rounded-md text-sm">All Half-day</button>
             </div>
             <div id="student-list-attendance" class="mt-4 bg-white p-4 rounded-lg shadow">
-                 <!-- Student list for attendance will be loaded here -->
-            </div>
+                 </div>
         </div>
         <div id="student-management" class="teacher-content hidden mt-6">
             <h2 class="text-xl font-semibold">Manage Students in 10-A</h2>
@@ -188,7 +173,6 @@
         <button onclick="logout()" class="mt-8 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">Logout</button>
     </div>
 
-    <!-- Student Dashboard -->
     <div id="student-dashboard" class="dashboard p-8">
         <h1 class="text-3xl font-bold text-gray-900">Your Attendance Summary</h1>
          <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -240,6 +224,10 @@
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({ error: 'An unknown network error occurred' }));
             throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        }
+        // For POST requests that might not return a body
+        if (method === 'POST' && response.status === 200) {
+             return response.json().catch(() => ({}));
         }
         return response.json();
     }
@@ -369,9 +357,13 @@
     }
     
     async function approveTeacher(teacherId) {
-        // This function would call POST /api/admin/approve-teacher/<teacher_id>
-        alert(`Approving teacher ${teacherId}. In a real app, this would make an API call.`);
-        loadPendingTeachers(); // Refresh the list
+        try {
+            const result = await apiCall(`/admin/approve-teacher/${teacherId}`, 'POST');
+            alert(result.message || `Teacher approved successfully.`);
+            loadPendingTeachers(); // Refresh the list
+        } catch (error) {
+            alert(`Error approving teacher: ${error.message}`);
+        }
     }
 
     // --- Teacher Functions ---
@@ -473,6 +465,3 @@
 </script>
 </body>
 </html>
-
-
-
